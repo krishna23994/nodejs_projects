@@ -1,0 +1,81 @@
+<html>
+<title>Zipper</title>
+<body>
+<p>Zip a folder</p>
+<div style='width:150px;height:20px;background-color:#0D47A1;'>
+<label style='color:#FFFFFF;' align='center'>Choose your folder...
+<input type="file" nwdirectory  id="txt1" style="visibility:hidden;" onchange="fun()"/>
+</label>
+</div>
+<p>UnZip a folder</p>
+<div style='width:150px;height:20px;background-color:#0D47A1;'>
+<label style='color:#FFFFFF;' align='center'>Choose your zip...
+<input type="file" accept="application/zip" id="txt2" style="visibility:hidden;" onchange="fun1()"/>
+</label>
+</div>
+<div id="image1"  style="display:none;">
+<image src="loader.gif" width=200px height=200px >
+</image>
+</div>
+
+<!-- <input type='text' value="" id="txt1"/>
+<button onclick="fun1()">Convert</button> -->
+</body>
+<script>
+function fun()
+{     
+	var file=document.getElementById('txt1').value;
+	document.getElementById('txt1').value="";
+	alert(file);
+	document.getElementById('image1').style.display='block';
+  
+	var fs=require('fs');
+	
+	if(fs.lstatSync(file).isDirectory())
+ {
+ 
+ var zipFolder = require('zip-folder');
+ 
+zipFolder(file,file+new Date().getTime()+'.zip', function(err) {
+    if(err) {
+        alert('Folder not converted to Zip Sorry!!!');
+    } else {
+    	document.getElementById('image1').style.display='none';
+        alert('Success check in your chosen path');
+    }
+}); 
+}
+else
+{
+	alert('Not a folder');
+}
+}
+function fun1()
+{
+var file=document.getElementById('txt2').value;
+document.getElementById('txt2').value="";
+folderpath = file.substr(0, file.lastIndexOf('.'));
+alert(file);
+document.getElementById('image1').style.display='block'; 
+var DecompressZip = require('decompress-zip');
+var unzipper = new DecompressZip(file);
+unzipper.on('error', function (err) {
+  alert('Caught an error');
+  document.getElementById('image1').style.display='none';
+});
+ 
+unzipper.on('extract', function (log) {
+    alert('Finished extracting');
+    document.getElementById('image1').style.display='none';
+});
+ 
+unzipper.on('progress', function (fileIndex, fileCount) {
+   document.getElementById('image1').style.display='block';
+});
+ 
+unzipper.extract({
+    path: folderpath+new Date().getTime()
+});
+ }
+</script>
+</html> 
